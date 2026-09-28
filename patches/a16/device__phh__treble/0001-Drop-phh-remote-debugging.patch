@@ -1,0 +1,32 @@
+From 6c6c86849581a4b2b59723844b5d9e4d9ceee578 Mon Sep 17 00:00:00 2001
+From: nico-j606 <nico-j606@localhost>
+Date: Mon, 28 Sep 2026 09:15:56 +0200
+Subject: [PATCH] Drop phh remote debugging
+
+phh-remotectl opens a reverse SSH tunnel exposing adb (tcp 5555) to
+android-remote.phh.me when persist.sys.phh.remote=true. Do not ship it.
+---
+ base.mk | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/base.mk b/base.mk
+index 5071165..1385944 100644
+--- a/base.mk
++++ b/base.mk
+@@ -185,11 +185,8 @@ PRODUCT_COPY_FILES += \
+     device/phh/treble/privapp-permissions-me.phh.treble.app.xml:system/etc/permissions/privapp-permissions-me.phh.treble.app.xml \
+     device/phh/treble/sysconfig-me.phh.treble.app.xml:system/etc/sysconfig/sysconfig-me.phh.treble.app.xml
+ 
+-# Remote debugging
+-PRODUCT_COPY_FILES += \
+-    device/phh/treble/remote/dbclient:system/bin/dbclient \
+-    device/phh/treble/remote/phh-remotectl.rc:system/etc/init/phh-remotectl.rc \
+-    device/phh/treble/remote/phh-remotectl.sh:system/bin/phh-remotectl.sh \
++# Remote debugging (reverse SSH tunnel exposing adb to android-remote.phh.me) removed:
++# no remote access path on a household device.
+ 
+ PRODUCT_PACKAGES += \
+     android.hardware.biometrics.fingerprint@2.1-service.oppo.compat \
+-- 
+2.55.0
+

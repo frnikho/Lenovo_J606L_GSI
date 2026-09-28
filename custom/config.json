@@ -1,0 +1,22 @@
+{
+  "base_image": "/lab/lenovo/out/lineage-22.2-20260928-nico-gsi_arm64_vN-userdebug.img",
+  "output_image": "/lab/lenovo/out/system-custom.img",
+  "remove": [
+    "/system/product/app/messaging",
+    "/system/product/app/Recorder",
+    "/system/product/app/Twelve",
+    "/system/product/app/Gallery2",
+    "/system/app/EasterEgg",
+    "/system/app/Stk",
+    "/system/app/SimAppDialog",
+    "/system/system_ext/priv-app/Updater",
+    "/system/system_ext/priv-app/QuickAccessWallet"
+  ],
+  "props": {
+    "/system/build.prop": {
+      "ro.build.display.id": "nico-j606-gsi {date} (lineage-22.2 nico build, qtiboost)"
+    }
+  },
+  "apps_dir": "/lab/lenovo/custom/apps",
+  "apps_install_dir": "/system/product/app"
+}

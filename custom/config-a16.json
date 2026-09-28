@@ -1,0 +1,33 @@
+{
+  "base_image": "/lab/lenovo/out/lineage-23.2-20260928-nico-arm64_bvN4-userdebug.img",
+  "output_image": "/lab/lenovo/out/system-custom-a16.img",
+  "remove": [
+    "/system/product/app/messaging",
+    "/system/product/app/Recorder",
+    "/system/product/app/Twelve",
+    "/system/product/app/Gallery2",
+    "/system/app/EasterEgg",
+    "/system/app/Stk",
+    "/system/app/SimAppDialog",
+    "/system/priv-app/MtkInCallService",
+    "/system/system_ext/priv-app/QuickAccessWallet",
+    "/system/app/BuiltInPrintService",
+    "/system/priv-app/BuiltInPrintService",
+    "/system/app/PrintRecommendationService",
+    "/system/app/BookmarkProvider",
+    "/system/app/PartnerBookmarksProvider",
+    "/system/priv-app/LiveWallpapersPicker",
+    "/system/priv-app/CellBroadcastLegacyApp",
+    "/system/product/app/Camelot",
+    "/system/etc/init/phh-remotectl.rc",
+    "/system/bin/phh-remotectl.sh",
+    "/system/bin/dbclient"
+  ],
+  "props": {
+    "/system/build.prop": {
+      "ro.build.display.id": "nico-j606-gsi {date} (lineage-23.2 nico build, qtiboost, anim 0.5)"
+    }
+  },
+  "apps_dir": "/lab/lenovo/custom/apps",
+  "apps_install_dir": "/system/product/app"
+}

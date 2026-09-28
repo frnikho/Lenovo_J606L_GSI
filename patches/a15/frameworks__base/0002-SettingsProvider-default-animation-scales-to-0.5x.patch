@@ -1,0 +1,48 @@
+From 530c1841d2f671960abedbeb9ea9bd029061efea Mon Sep 17 00:00:00 2001
+From: nico-j606 <nico-j606@localhost>
+Date: Mon, 28 Sep 2026 09:10:50 +0200
+Subject: [PATCH 2/2] SettingsProvider: default animation scales to 0.5x
+
+Change-Id: I89435444d5513ffe94544619c1c75aa201f2e442
+---
+ packages/SettingsProvider/res/values/defaults.xml         | 4 ++--
+ .../com/android/providers/settings/DatabaseHelper.java    | 8 ++++++++
+ 2 files changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/packages/SettingsProvider/res/values/defaults.xml b/packages/SettingsProvider/res/values/defaults.xml
+index 5ddf005d9468..b4df39664cbd 100644
+--- a/packages/SettingsProvider/res/values/defaults.xml
++++ b/packages/SettingsProvider/res/values/defaults.xml
+@@ -34,8 +34,8 @@
+     <!-- Default screen brightness, from 0 to 255.  102 is 40%. -->
+     <integer name="def_screen_brightness">102</integer>
+     <bool name="def_screen_brightness_automatic_mode">false</bool>
+-    <fraction name="def_window_animation_scale">100%</fraction>
+-    <fraction name="def_window_transition_scale">100%</fraction>
++    <fraction name="def_window_animation_scale">50%</fraction>
++    <fraction name="def_window_transition_scale">50%</fraction>
+     <bool name="def_haptic_feedback">true</bool>
+ 
+     <bool name="def_bluetooth_on">true</bool>
+diff --git a/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java b/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java
+index 7da858bac7a2..fffa7bc9527f 100644
+--- a/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java
++++ b/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java
+@@ -2279,6 +2279,14 @@ class DatabaseHelper extends SQLiteOpenHelper {
+                     + " VALUES(?,?);");
+ 
+             // --- Previously in 'system'
++            // Animation scales are global settings; animator durations follow the transition scale
++            loadFractionSetting(stmt, Settings.Global.WINDOW_ANIMATION_SCALE,
++                    R.fraction.def_window_animation_scale, 1);
++            loadFractionSetting(stmt, Settings.Global.TRANSITION_ANIMATION_SCALE,
++                    R.fraction.def_window_transition_scale, 1);
++            loadFractionSetting(stmt, Settings.Global.ANIMATOR_DURATION_SCALE,
++                    R.fraction.def_window_transition_scale, 1);
++
+             loadBooleanSetting(stmt, Settings.Global.AIRPLANE_MODE_ON,
+                     R.bool.def_airplane_mode_on);
+ 
+-- 
+2.55.0
+

@@ -1,0 +1,12 @@
+date,etiquette,frames,janky,janky_pct,p90,p99,launch_settings_ms,launch_jelly_ms,launch_etar_ms
+2026-09-27T23:47:16+02:00,lineage22.2-andyyan-userdebug+debloat,465,18,3.87,20ms,29ms,1108,729,650
+2026-09-28T04:35:09+02:00,nico-build userdebug + qtiboost ON,441,16,3.63,19ms,21ms,1024,921,568
+2026-09-28T04:35:52+02:00,nico-build userdebug + qtiboost OFF,456,17,3.73,21ms,32ms,1078,725,523
+2026-09-28T04:36:34+02:00,nico-build userdebug + qtiboost ON (2),452,16,3.54,19ms,27ms,1035,723,474
+2026-09-28T04:59:12+02:00,nico-build userdebug + boost anim 0x1083,436,3,0.69,14ms,19ms,1031,848,603
+2026-09-28T05:00:21+02:00,nico-build + boost + speed-profile (sans profil),445,6,1.35,13ms,17ms,921,788,537
+2026-09-28T05:01:18+02:00,nico-build + boost + speed,445,6,1.35,14ms,21ms,990,763,528
+2026-09-28T05:02:14+02:00,TEST CPU min=max (référence plafond),467,9,1.93,19ms,23ms,994,766,522
+2026-09-28T07:22:59+02:00,A16 MisterZtr 23.2 prebuilt (sans boost),518,1,0.19,23ms,25ms,1149,1033,773
+2026-09-28T18:29:23+02:00,A16 nico userdebug + boost + anim0.5,470,2,0.43,22ms,24ms,1039,942,707
+2026-09-28T20:26:09+02:00,A16 nico + root tuning (schedtune, noop, debloat),412,2,0.49,23ms,24ms,1092,873,696

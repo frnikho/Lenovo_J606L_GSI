@@ -1,0 +1,39 @@
+# Projet GSI Lenovo TB-J606L — seuls les scripts, patches, configs et notes sont versionnés.
+
+# Sources Android, sorties de compilation, ccache (des centaines de Go, reproductibles via scripts/)
+/build/
+
+# Images système, boot, firmware (lourdes et/ou propriétaires Lenovo/Qualcomm)
+/out/
+/stock/
+/gsi/
+*.img
+*.img.gz
+*.img.xz
+*.7z
+*.zip
+*.bin
+*.mbn
+*.elf
+
+# Fichiers extraits de la tablette (binaires et configs propriétaires du vendor)
+/vendor-dump/
+
+# APK tiers (Magisk, applis intégrées) : se retéléchargent depuis leurs sources officielles
+*.apk
+/custom/apps/
+
+# Journaux
+*.log
+
+# IDE / éditeur
+/.idea/
+*.iml
+.vscode/
+*.swp
+*~
+
+# Système
+.DS_Store
+Thumbs.db
+desktop.ini

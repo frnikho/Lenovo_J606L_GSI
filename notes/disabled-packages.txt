@@ -1,0 +1,6 @@
+com.qualcomm.qti.qms.service.connectionsecurity
+com.qualcomm.qti.qms.service.telemetry
+com.stevesoltys.seedvault
+com.android.cellbroadcastreceiver.module
+com.android.dialer
+com.android.emergency
