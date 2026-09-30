@@ -1,0 +1,6 @@
+id=nico_overview
+name=Overview (tableau de bord voiture)
+version=0.1.0
+versionCode=1
+author=nico
+description=Installe dev.nico.overview en appli système privilégiée
