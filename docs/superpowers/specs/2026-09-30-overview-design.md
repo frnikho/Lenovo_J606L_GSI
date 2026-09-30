@@ -30,13 +30,13 @@ recherche d'adresse dans l'overview, stations « sur le trajet ».
 - Actions privilégiées par les API Android quand la permission est accordable à une priv-app ; sinon repli sur le
   root (`su -c cmd …`). La liste exacte est vérifiée pendant le plan (voir « Points à vérifier »).
 - Pas de serveur : l'appli interroge directement Open-Meteo et le flux public des prix des carburants.
-- Stockage local (DataStore) : réglages, lieux, dernières données reçues, état d'avant le mode conduite.
+- Stockage local (DataStore) : réglages, lieux, dernières données reçues.
 
 ## Architecture
 
 ```
 app/overview/
-├─ drivemode/   détection Android Auto, machine à états, actions (Wi-Fi, profil, écran, premier plan)
+├─ drivemode/   détection Android Auto, machine à états, actions (confiance, Wi-Fi, écran, premier plan)
 ├─ ui/          grille bento Compose, thème clair/sombre, composants animés, veille sombre
 ├─ tiles/
 │   ├─ media/     lecteur en cours (MediaSession)
@@ -50,7 +50,7 @@ app/overview/
 ```
 
 Chaque tuile a sa source de données, son état et son affichage, sans dépendre des autres. L'interface ne fait
-qu'afficher des états exposés en `StateFlow`. Les services système (Wi-Fi, profils, écran, capteurs, position) sont
+qu'afficher des états exposés en `StateFlow`. Les services système (Wi-Fi, confiance, écran, capteurs, position) sont
 derrière des interfaces pour pouvoir être remplacés par des faux dans les tests.
 
 ## Mode conduite
@@ -59,11 +59,12 @@ derrière des interfaces pour pouvoir être remplacés par des faux dans les tes
 `CONNECTION_TYPE_PROJECTION` = en voiture. Repli si peu fiable : état USB en mode accessoire (Android Open Accessory).
 
 **Entrée**, dans l'ordre :
-1. Sauvegarde de l'état courant (profil actif, réseaux dont la connexion auto sera coupée) sur le stockage.
-2. Profil LineageOS « Automobile » (écran de verrouillage désactivé).
-3. Wi-Fi : connexion automatique coupée pour les réseaux enregistrés autres que le point d'accès du Pixel
-   (réglable, défaut `Pixel_9798`), puis connexion à celui-ci.
-4. Overview au premier plan, écran allumé et maintenu allumé tant qu'elle est affichée.
+1. Agent de confiance de l'overview : accorde la confiance (mécanisme Smart Lock) → la tablette reste déverrouillée
+   tant qu'Android Auto est connecté (après un premier déverrouillage si elle était verrouillée à la connexion).
+2. Wi-Fi : si la tablette n'est pas sur le point d'accès du Pixel (réglable, défaut `Pixel_9798`), connexion forcée
+   par root (`cmd wifi connect-network`, mot de passe saisi une fois dans les réglages). Ce choix manuel fait
+   ensuite préférer le Pixel à la Freebox tant qu'il est à portée ; rien à restaurer.
+3. Overview au premier plan, écran allumé et maintenu allumé tant qu'elle est affichée.
 
 **Pendant la conduite** :
 - Veille sombre après 30 s sans toucher : luminosité de la fenêtre au minimum (le réglage système n'est pas modifié),
@@ -71,15 +72,20 @@ derrière des interfaces pour pouvoir être remplacés par des faux dans les tes
 - Appui sur un lieu ou une station → Waze, puis retour de l'overview au premier plan ~2 s après (la navigation
   continue sur l'écran de la voiture).
 
-**Sortie** : Android Auto déconnecté depuis plus de 10 s (un faux contact plus court est ignoré). Restauration de la
-connexion auto des réseaux, profil « Par défaut », fermeture de l'overview, extinction normale de l'écran.
+**Sortie** : Android Auto déconnecté depuis plus de 10 s (un faux contact plus court est ignoré). Retrait de la
+confiance (le code redevient nécessaire), fermeture de l'overview, extinction normale de l'écran.
 
-**Robustesse** : si l'appli plante ou si la tablette redémarre en mode conduite, l'état sauvegardé est restauré au
-démarrage suivant (hors connexion Android Auto active). Point d'accès du Pixel introuvable → la tablette reste sur le
+**Robustesse** : si l'appli plante ou si la tablette redémarre, Android retire de lui-même la confiance accordée par
+l'agent ; aucun état n'est à restaurer. Point d'accès du Pixel introuvable → la tablette reste sur le
 réseau courant, un indicateur discret le signale, le reste du mode conduite continue.
 
-**Migration** : les déclencheurs Wi-Fi du profil « Automobile » configurés à la main sont à supprimer une fois
-l'overview installée (sinon les deux mécanismes se contredisent).
+**Migration** : le profil LineageOS « Automobile » et ses déclencheurs Wi-Fi configurés à la main deviennent
+inutiles ; les supprimer une fois l'overview installée. L'agent de confiance de l'overview est à activer une fois dans
+Paramètres → Sécurité → Agents de confiance.
+
+*Révision 2026-09-30 (plan)* : l'API des profils LineageOS n'est pas exposée aux applis (`org.lineageos.platform.jar`
+hors classpath) et aucune API/commande ne coupe la connexion auto d'un réseau → remplacés par l'agent de confiance
+(`PROVIDE_TRUST_AGENT` = signature|privileged) et la connexion forcée par root.
 
 ## Tuiles et données
 
@@ -130,26 +136,24 @@ sombre. Pas de flou plein écran ni de carte animée (GPU Adreno 610). Rien qui 
 - Chaque tuile a 4 états : chargement, OK, donnée ancienne, erreur. Une tuile en erreur n'affecte pas les autres.
 - Dernière donnée reçue conservée sur le stockage : sans réseau, affichée avec son âge (« il y a 12 min ») et une
   légère transparence.
-- Pas de position : dernière position connue, signalée sur la tuile GPL.
-- Aucun lecteur actif : la tuile musique affiche un état vide avec un bouton pour ouvrir le dernier lecteur.
+- Pas de position : dernière position connue ; sans aucune, les tuiles restent en « recherche… ».
+- Aucun lecteur actif : la tuile musique affiche un état vide « Aucune lecture en cours ».
 
 ## Tests
 
 - **Unitaires (JVM)**, objectif 80 % de couverture sur la logique : machine à états du mode conduite (entrée, sortie
-  après 10 s, faux contact ignoré, restauration après plantage), lecture et filtrage du flux carburant (GPL, 20 km,
+  après 10 s, faux contact ignoré), lecture et filtrage du flux carburant (GPL, 20 km,
   tri, distance, prix anciens), jour/nuit (soleil + hystérésis du capteur), liens Waze. Services système simulés.
 - **Captures d'écran automatiques** (Roborazzi) : chaque tuile dans ses 4 états, en clair et en sombre.
-- **Sur la tablette avec le DHU** (`scripts/dhu.sh`) : connexion → premier plan, Wi-Fi Pixel, profil Automobile ;
-  déconnexion → restauration ; lieu → Waze dans la fenêtre DHU puis retour de l'overview.
+- **Sur la tablette avec le DHU** (`scripts/dhu.sh`) : connexion → premier plan, Wi-Fi Pixel, confiance accordée ;
+  déconnexion → confiance retirée ; lieu → Waze dans la fenêtre DHU puis retour de l'overview.
 - **Fluidité** : même méthode que `scripts/bench.sh` (gfxinfo), objectif < 5 % d'images saccadées.
 - **Essai voiture** : liste de contrôle (démarrage auto, point d'accès, Waze sur l'écran voiture, veille, thème nuit).
 
 ## Points à vérifier pendant le plan
 
-1. Permissions réellement accordables à une priv-app sur ce build : désactivation de la connexion auto Wi-Fi
-   (`WifiManager.allowAutojoin` : `NETWORK_SETTINGS` / `MANAGE_WIFI_NETWORK_SELECTION`), profils LineageOS
-   (`lineageos.permission.MODIFY_PROFILES`), démarrage d'activité en arrière-plan, `MEDIA_CONTENT_CONTROL`.
-   Repli root pour ce qui ne passe pas.
+1. ~~Permissions~~ vérifié : `PROVIDE_TRUST_AGENT`, `START_ACTIVITIES_FROM_BACKGROUND`, `MEDIA_CONTENT_CONTROL`
+   sont signature|privileged → accordables à la priv-app. Wi-Fi par root (voir révision).
 2. `CarConnection` signale bien la projection avec le DHU et en USB réel.
-3. Format exact du flux carburant (champs GPL, filtre géographique `within_distance`) et de la réponse Open-Meteo.
+3. ~~Formats~~ vérifié : flux carburant (`gplc_prix`, `gplc_maj`, `geom.lat/lon`, `within_distance`) et Open-Meteo.
 4. L'écran de la tablette reste utilisable pendant la projection Android Auto.
