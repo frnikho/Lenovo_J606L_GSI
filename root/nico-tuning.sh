@@ -19,4 +19,8 @@ done
 # zram : lire une seule page à la fois (page-cluster=3 est prévu pour un disque, pas pour de la RAM compressée)
 echo 0 > /proc/sys/vm/page-cluster
 
+# Double tap pour réveiller : smart wake du tactile Himax, que le GSI n'active pas (geste 0 = double tap -> KEY_POWER)
+echo 1 > /proc/android_touch/gesture_control
+echo 1 > /proc/android_touch/GESTURE
+
 log -t nico-tuning "réglages appliqués"

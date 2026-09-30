@@ -175,3 +175,26 @@ noop vs cfq : lancement à froid Paramètres 1530 → 1450 ms. zram : lzo seul d
   Seedvault, CellBroadcast, Dialer, EmergencyInfo. Reboot OK sans crash, MemAvailable 1,66 → 1,9 Go.
 - Réglages persistants : `/data/adb/service.d/nico-tuning.sh` (copie : `root/nico-tuning.sh`), log `nico-tuning`.
 - Note : la passe finale a rendu moins d'images (~500 vs ~800) → comparaison indicative, tendance nette.
+
+## GSI GApps pour Android Auto (2026-09-30)
+- Objectif : Android Auto (filaire) depuis la tablette → vrais Google Play Services nécessaires (GmsCore/microG insuffisant).
+- `vendor/gapps` (MindTheGapps) déjà présent dans `build/src16` → cible `lineage_arm64_bgN4` :
+  `scripts/build-gsi16.sh userdebug gapps` (52 min avec ccache). Image 3,3 Go, personnalisée 3 201 Mio
+  (`custom/config-a16-gapps.json` → `out/system-custom-a16-gapps.img`).
+- super : groupe `qti_dynamic_partitions_a` max 6 140 Mio ; system 3 201 + system_ext 409 + vendor 664 = 4 274 Mio → OK.
+- Flash avec wipe, premier démarrage OK. Applis réinstallées via `scripts/tablet-apps.sh restore` (APK + splits sauvegardés
+  avant le flash par `backup` dans `apks/tablet/`).
+- **Incident** : après la 1re session (applis + « installation supplémentaire » Magisk + redémarrage), écran « Can't load
+  Android system » en boucle, adb jamais autorisé (→ /data probablement non monté). `persist.sys.disable_rescue=true` :
+  ce n'est donc pas Rescue Party. Factory reset depuis le recovery → démarre.
+- Reproduction pas à pas après le reset, journaux capturés à chaque démarrage : reboot à nu OK, reboot avec les 12 applis
+  OK, Magisk (installation supplémentaire + reboot) OK, reboot avec `nico-tuning.sh` OK. **Cause non reproduite.**
+  Si ça revient : récupérer `/sys/fs/pstore` (root) au démarrage suivant avant tout reset.
+- Après un reset : penser à redésactiver `notes/disabled-packages.txt` et à remettre `nico-tuning.sh` dans service.d.
+- Double tap pour réveiller : smart wake du tactile Himax (`/proc/android_touch/gesture_control` + `GESTURE`, geste 0),
+  activé dans `nico-tuning.sh`. Réveille l'écran, l'écran de verrouillage reste (PIN).
+- **Android Auto validé sans voiture** avec le Desktop Head Unit (`scripts/dhu.sh`, SDK `extras;google;auto` r02.0) :
+  projection OK (Maps, YouTube Music, téléphone). Android Auto 17.7 (le paquet MindTheGapps n'est qu'un stub 1.2 →
+  mise à jour Play Store). Premier lancement : téléchargement Maps/Appli Google/synthèse vocale, puis accès aux
+  notifications requis (`cmd notification allow_listener ...SharedNotificationListenerManager$ListenerService`).
+  DHU sur ce PC : libc++ du NDK (LD_LIBRARY_PATH) et config ALSA sans JACK (sinon SIGSEGV dans jack_client_open).
