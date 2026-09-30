@@ -1,0 +1,7 @@
+{
+  "latitude": 47.9, "longitude": 1.9199996, "utc_offset_seconds": 7200, "timezone": "Europe/Paris",
+  "current": {"time": "2026-09-30T20:00", "interval": 900, "temperature_2m": 21.5, "weather_code": 3, "is_day": 0},
+  "hourly": {"time": ["2026-09-30T20:00", "2026-09-30T21:00", "2026-09-30T22:00"], "precipitation_probability": [78, 73, 83]},
+  "daily": {"time": ["2026-09-30"], "temperature_2m_max": [22.5], "temperature_2m_min": [19.9],
+            "sunrise": ["2026-09-30T07:49"], "sunset": ["2026-09-30T19:33"]}
+}
