@@ -15,8 +15,14 @@ object Formats {
 
     fun price(eur: Double): String = String.format(FR, "%.3f €", eur)
 
-    fun distance(km: Double): String =
-        if (km < SHORT_DISTANCE_KM) String.format(FR, "%.1f km", km) else "${km.roundToInt()} km"
+    fun distance(km: Double): String {
+        val roundedToOneDecimal = (km * 10).roundToInt() / 10.0
+        return if (roundedToOneDecimal < SHORT_DISTANCE_KM) {
+            String.format(FR, "%.1f km", km)
+        } else {
+            "${km.roundToInt()} km"
+        }
+    }
 
     fun temperature(celsius: Double): String {
         val rounded = celsius.roundToInt()

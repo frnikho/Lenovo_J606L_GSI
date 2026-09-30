@@ -21,6 +21,11 @@ class FormatsTest {
     }
 
     @Test
+    fun `distance just under 10 km uses long format`() {
+        assertThat(Formats.distance(9.96)).isEqualTo("10 km")
+    }
+
+    @Test
     fun `temperature is rounded with degree sign`() {
         assertThat(Formats.temperature(21.5)).isEqualTo("22°")
         assertThat(Formats.temperature(-0.4)).isEqualTo("0°")
@@ -31,6 +36,11 @@ class FormatsTest {
         assertThat(Formats.age(30_000)).isEqualTo("à l'instant")
         assertThat(Formats.age(12 * 60_000)).isEqualTo("il y a 12 min")
         assertThat(Formats.age(3 * 3_600_000)).isEqualTo("il y a 3 h")
+    }
+
+    @Test
+    fun `age with negative elapsed due to clock skew is instant`() {
+        assertThat(Formats.age(-5 * 60_000)).isEqualTo("à l'instant")
     }
 
     @Test
