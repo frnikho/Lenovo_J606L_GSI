@@ -45,6 +45,20 @@ class FuelTest {
     }
 
     @Test
+    fun `parser skips records with unparsable date`() {
+        val json = """
+            {
+              "results": [
+                {"id": 1, "adresse": "A", "ville": "V", "geom": {"lon": 1.9093, "lat": 47.9029}, "gplc_prix": 0.9, "gplc_maj": "2026-09-30T00:01:00+00:00"},
+                {"id": 2, "adresse": "B", "ville": "W", "geom": {"lon": 1.9093, "lat": 47.9029}, "gplc_prix": 0.95, "gplc_maj": "pas-une-date"}
+              ]
+            }
+        """.trimIndent()
+        val stations = FuelParser.parse(json, origin)
+        assertThat(stations.map { it.id }).containsExactly(1L)
+    }
+
+    @Test
     fun `repository fetches and selects`() = runTest {
         var requested = ""
         val http = HttpClient { url -> requested = url; body }

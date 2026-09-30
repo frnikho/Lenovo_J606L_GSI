@@ -31,6 +31,8 @@ object FuelParser {
             val geom = record.geom ?: return@mapNotNull null
             val price = record.price ?: return@mapNotNull null
             val updated = record.updated ?: return@mapNotNull null
+            val updatedAtMs = runCatching { OffsetDateTime.parse(updated).toInstant().toEpochMilli() }
+                .getOrNull() ?: return@mapNotNull null
             val position = LatLon(geom.lat, geom.lon)
             FuelStation(
                 id = record.id,
@@ -38,7 +40,7 @@ object FuelParser {
                 city = record.ville.orEmpty(),
                 position = position,
                 priceEur = price,
-                updatedAtMs = OffsetDateTime.parse(updated).toInstant().toEpochMilli(),
+                updatedAtMs = updatedAtMs,
                 distanceKm = distanceKm(origin, position),
             )
         }
