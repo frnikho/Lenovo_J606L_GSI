@@ -1,0 +1,10 @@
+{
+  "total_count": 4,
+  "results": [
+    {"id": 45160006, "adresse": "3091 RUE MARCEL BELOT", "ville": "Olivet", "geom": {"lon": 1.914, "lat": 47.841}, "gplc_prix": 0.909, "gplc_maj": "2026-09-30T00:01:00+00:00"},
+    {"id": 45100008, "adresse": "39 AV .J.F.KENNEDY", "ville": "Orléans", "geom": {"lon": 1.92524, "lat": 47.84264}, "gplc_prix": 0.914, "gplc_maj": "2026-09-30T00:01:00+00:00"},
+    {"id": 45000001, "adresse": "1 RUE ANCIENNE", "ville": "Saran", "geom": {"lon": 1.87, "lat": 47.95}, "gplc_prix": 0.899, "gplc_maj": "2026-09-01T00:00:00+00:00"},
+    {"id": 45000002, "adresse": "2 RUE SANS GEOM", "ville": "Fleury", "geom": null, "gplc_prix": 0.95, "gplc_maj": "2026-09-30T00:01:00+00:00"},
+    {"id": 45000003, "adresse": "3 RUE DU CENTRE", "ville": "Orléans", "geom": {"lon": 1.9093, "lat": 47.9029}, "gplc_prix": 0.929, "gplc_maj": "2026-09-29T08:00:00+02:00"}
+  ]
+}
