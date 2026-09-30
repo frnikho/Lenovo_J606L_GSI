@@ -26,6 +26,7 @@ class TileStateTest {
     fun `dataOrNull exposes data of ready and stale`() {
         assertThat(TileState.Ready(1, 0).dataOrNull()).isEqualTo(1)
         assertThat(TileState.Stale(2, 0).dataOrNull()).isEqualTo(2)
-        assertThat(TileState.Error("x").dataOrNull() as Any?).isNull()
+        val error: TileState<Int> = TileState.Error("x")
+        assertThat(error.dataOrNull()).isNull()
     }
 }
